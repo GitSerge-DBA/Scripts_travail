@@ -49,10 +49,9 @@ NBR_ROUND_TRIP_CLIEN   as "Allé-retours à la BD",
 NBR_MEG_ENVOI_DB_LINK  as "Meg envoyé au client via DBLink" , 
 NBR_MEG_RECU_DB_LINK   as "Meg reçu du client via DBLink" , 
 NBR_ROUND_TRIP_DB_LINK as "Allé-retours à la BD via DBLink"  
-FROM  DRI_AUDIT.DRI_AUDIT_CONNE_BD_STIBD_VUE V, DRI_AUDIT.DRI_AUDIT_CONNE_STATS_IBD_TRI T
+FROM  DRI_AUDIT.DRI_AUDIT_CONNE_BD_STIBD_VUE V
 WHERE  CODE_UTILI_BD LIKE '&&1%'
-and V.ACS_NOM_BASE = T.ACS_NOM_BASE
-order by T.ORD_TRI || V.ACS_NOM_BASE,CODE_UTILI_BD;  
+order by CODE_UTILI_BD;  
 
 
 CLEAR BREAKS
@@ -87,10 +86,40 @@ NBR_ROUND_TRIP_CLIEN   as "Allé-retours à la BD",
 NBR_MEG_ENVOI_DB_LINK  as "Meg envoyé au client via DBLink" , 
 NBR_MEG_RECU_DB_LINK   as "Meg reçu du client via DBLink" , 
 NBR_ROUND_TRIP_DB_LINK as "Allé-retours à la BD via DBLink"  
-FROM  DRI_AUDIT.DRI_AUDIT_CONNE_MMBD_STIBD_VUE V, DRI_AUDIT.DRI_AUDIT_CONNE_STATS_IBD_TRI T
+FROM  DRI_AUDIT.DRI_AUDIT_CONNE_MMBD_STIBD_VUE V
 WHERE  CODE_UTILI_BD LIKE '&&1%'
-and V.ACS_NOM_BASE = T.ACS_NOM_BASE
-order by T.ORD_TRI || V.ACS_NOM_BASE,ACS_DATE_LOGON,CODE_UTILI_BD;  
+order by ACS_DATE_LOGON,CODE_UTILI_BD;  
+  
+
+
+break on "Base de  Données" SKIP PAGE on "Mois"
+COMPUTE SUM LABEL TOTAL  OF "Meg envoyé au client" on "Base de  Données" 
+COMPUTE SUM LABEL TOTAL  OF "Meg reçu du client" on "Base de  Données" 
+COMPUTE SUM LABEL TOTAL  OF "Allé-retours à la BD" on "Base de  Données"  
+COMPUTE SUM LABEL TOTAL  OF "Meg envoyé au client via DBLink"  on "Base de  Données" 
+COMPUTE SUM LABEL TOTAL  OF "Meg reçu du client via DBLink" on "Base de  Données"
+COMPUTE SUM LABEL TOTAL  OF "Allé-retours à la BD via DBLink"  on "Base de  Données" 
+COMPUTE SUM LABEL TOTAL  OF "Meg envoyé au client" on "Mois"
+COMPUTE SUM LABEL TOTAL  OF "Meg reçu du client" on "Mois" 
+COMPUTE SUM LABEL TOTAL  OF "Allé-retours à la BD" on "Mois" 
+COMPUTE SUM LABEL TOTAL  OF "Meg envoyé au client via DBLink"  on "Mois"
+COMPUTE SUM LABEL TOTAL  OF "Meg reçu du client via DBLink" on "Mois"
+COMPUTE SUM LABEL TOTAL  OF "Allé-retours à la BD via DBLink"  on "Mois";
+
+
+SELECT  
+v.ACS_NOM_BASE  as "Base de  Données", 
+ACS_DATE_LOGON as "Mois",
+CODE_UTILI_BD  as "Compte BD",
+NBR_MEG_ENVOI_CLIEN    as "Meg envoyé au client", 
+NBR_MEG_RECU_CLIEN     as "Meg reçu du client"	, 
+NBR_ROUND_TRIP_CLIEN   as "Allé-retours à la BD",  
+NBR_MEG_ENVOI_DB_LINK  as "Meg envoyé au client via DBLink" , 
+NBR_MEG_RECU_DB_LINK   as "Meg reçu du client via DBLink" , 
+NBR_ROUND_TRIP_DB_LINK as "Allé-retours à la BD via DBLink"  
+FROM  DRI_AUDIT.DRI_AUDIT_CONNE_MMBD_STIBD_VUE V
+WHERE  CODE_UTILI_BD LIKE '&&1%'
+order by ACS_DATE_LOGON,CODE_UTILI_BD;  
   
 
 spool off
